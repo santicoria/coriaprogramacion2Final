@@ -1,30 +1,22 @@
 package com.mycompany.myapp.web.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.mycompany.myapp.repository.OrdenRepository;
+import com.mycompany.myapp.service.AnalizarOrdenService;
 import com.mycompany.myapp.service.OrdenService;
-import com.mycompany.myapp.service.dto.OrdenDTO;
 import com.mycompany.myapp.service.mapper.OrdenMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.json.JSONObject;
 import org.springframework.http.*;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 
 @RestController
 @RequestMapping("/api/ordenes")
 public class OrdenesController {
 
+    private final AnalizarOrdenService analizarOrdenService;
     private final OrdenRepository ordenRepository;
     private final OrdenMapper ordenMapper;
 
@@ -43,7 +35,8 @@ public class OrdenesController {
 
 
     @Autowired
-    public OrdenesController(OrdenRepository ordenRepository, RestTemplate restTemplate, OrdenService ordenService, OrdenMapper ordenMapper) {
+    public OrdenesController(AnalizarOrdenService analizarOrdenService, OrdenRepository ordenRepository, RestTemplate restTemplate, OrdenService ordenService, OrdenMapper ordenMapper) {
+        this.analizarOrdenService = analizarOrdenService;
         this.ordenRepository = ordenRepository;
         this.restTemplate = restTemplate;
         this.ordenService = ordenService;
@@ -54,6 +47,7 @@ public class OrdenesController {
 
     @GetMapping("/ordenes")
     public ResponseEntity<String> getOrdenes() {
+
         String externalEndpoint = "/api/ordenes/ordenes";
         String postUrl = "http://localhost:8081/api/ordens";
 
@@ -107,6 +101,14 @@ public class OrdenesController {
             return null;
         }
 
+    }
+
+    @GetMapping("/analizar-ordenes")
+    public String analizarOrdenes() {
+
+        analizarOrdenService.analizarOrdenes();
+
+        return "Ok";
     }
 
 }
