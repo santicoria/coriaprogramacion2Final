@@ -121,3 +121,15 @@ jhipster:
 # ===================================================================
 
 # application:
+
+external:
+  service:
+    url: "http://192.168.194.254:8000"
+
+externalBearer:
+  token: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW50aWFnb2NvcmlhIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTczMjYzMTcwM30.F1kI20s9p1kv8l2LhJcEcL-66_9X44zIybZw1piDV_ze2FiU3C7Th6iD6FRT7RFwuE9lWw1BCCJYr9hQYk8rEg"
+
+localBearer:
+  token: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGgiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTcwMjA4MjQwN30.rz3AjROacMV5hWxpgigTFtwghC00Y56zpJ7snCcGRIPNdNogxsvhvh4gXYI9EooMkCkmN9kNOBGaIThF4i-jeQ"
+
+

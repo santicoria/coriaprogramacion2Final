@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.repository.OrdenRepository;
 import com.mycompany.myapp.service.AnalizarOrdenService;
+import com.mycompany.myapp.service.GetOrdenesFromCatedraService;
 import com.mycompany.myapp.service.OrdenService;
 import com.mycompany.myapp.service.dto.OrdenDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
@@ -36,18 +37,9 @@ import tech.jhipster.web.util.reactive.ResponseUtil;
 @RequestMapping("/api")
 public class OrdenResource {
 
-    private final RestTemplate restTemplate;
-
     private final AnalizarOrdenService analizarOrdenService;
 
-    @Value("${external.service.url}")
-    private String externalServiceUrl;
-
-    @Value("${externalBearer.token}")
-    private String bearerToken;
-
-    @Value("${localBearer.token}")
-    private String bearerLocalToken;
+    private final GetOrdenesFromCatedraService getOrdenesFromCatedraService;
 
     private final Logger log = LoggerFactory.getLogger(OrdenResource.class);
 
@@ -60,11 +52,11 @@ public class OrdenResource {
 
     private final OrdenRepository ordenRepository;
 
-    public OrdenResource(OrdenService ordenService, OrdenRepository ordenRepository, RestTemplate restTemplate, AnalizarOrdenService analizarOrdenService) {
+    public OrdenResource(OrdenService ordenService, OrdenRepository ordenRepository, AnalizarOrdenService analizarOrdenService,GetOrdenesFromCatedraService getOrdenesFromCatedraService) {
         this.ordenService = ordenService;
         this.ordenRepository = ordenRepository;
-        this.restTemplate = restTemplate;
         this.analizarOrdenService = analizarOrdenService;
+        this.getOrdenesFromCatedraService = getOrdenesFromCatedraService;
     }
 
     /**
@@ -241,51 +233,19 @@ public class OrdenResource {
 
     @GetMapping("/ordenes")
     public  Mono<Void> getOrdenesCatedra() {
+        log.debug("Request para recuperar las ordenes de la catedra");
 
-        log.debug("Request para obtener lista de ordenes de la catedra");
-
-        String externalEndpoint = "/api/ordenes/ordenes";
-
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        List<OrdenDTO> ordenDTOList;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + bearerToken);
-
-        //  Get Request a la catedra para obtener la lista de ordenes sin procesar
-        HttpEntity <String> requestGetEntity = new HttpEntity<>(headers);
-        ResponseEntity <String> jsonData = restTemplate.exchange(
-            externalServiceUrl + externalEndpoint,
-            HttpMethod.GET,
-            requestGetEntity,
-            String.class
-        );
-
-        //  Si se obtiene la lista, almacenarla en la DB del servicio
-        if (jsonData.getStatusCode() == HttpStatus.OK) {
-
-            //  Transformar el JSON del Request a una lista de OrdenDTO
-            try {
-                ordenDTOList = mapper.readValue(jsonData.getBody().substring(11, jsonData.getBody().length() - 1), new TypeReference<List<OrdenDTO>>() {});
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-
-            return  ordenService.saveAll(ordenDTOList);
-
-        } else {
-            return null;
-        }
+        return getOrdenesFromCatedraService.getOrdenesCatedra();
 
     }
 
     @GetMapping("/analizar-ordenes")
-    public String analizarOrdenes() {
+    public boolean analizarOrdenes() {
         log.debug("Request para analizar las ordenes");
 
-        analizarOrdenService.analizarOrdenes();
+        boolean result = analizarOrdenService.analizarOrdenes(ordenRepository.findAll().collectList());
 
-        return "Ok";
+        return result;
     }
 
 

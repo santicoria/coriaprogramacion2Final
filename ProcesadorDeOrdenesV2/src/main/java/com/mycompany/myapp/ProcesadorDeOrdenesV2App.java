@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
+
+import com.mycompany.myapp.service.LoggerService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +27,13 @@ public class ProcesadorDeOrdenesV2App {
 
     private static final Logger log = LoggerFactory.getLogger(ProcesadorDeOrdenesV2App.class);
 
+    private final LoggerService loggerService;
+
     private final Environment env;
 
-    public ProcesadorDeOrdenesV2App(Environment env) {
+    public ProcesadorDeOrdenesV2App(Environment env, LoggerService loggerService) {
         this.env = env;
+        this.loggerService = loggerService;
     }
 
     /**
@@ -40,6 +45,7 @@ public class ProcesadorDeOrdenesV2App {
      */
     @PostConstruct
     public void initApplication() {
+        loggerService.LoggingTester();
         Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
         if (
             activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) &&

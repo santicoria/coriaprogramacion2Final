@@ -20,13 +20,15 @@ import java.util.List;
 @Service
 public class AnalizarOrdenService {
 
+    private final ProgramarOperacionService programarOperacionService;
+
+    private final LoggerService loggerService;
+
     private final Logger log = LoggerFactory.getLogger(AnalizarOrdenService.class);
 
     private ReporteOperacionesService reporteOperacionesService;
 
     private OrdenRepository ordenRepository;
-
-    private final OrdenMapper ordenMapper;
 
     private List<Orden> operacionFallida = new ArrayList<>();
 
@@ -36,8 +38,6 @@ public class AnalizarOrdenService {
 
     private CompraVentaService compraVentaService;
 
-    private final RestTemplate restTemplate;
-
     @Value("${external.service.url}")
     private String externalServiceUrl;
 
@@ -45,24 +45,24 @@ public class AnalizarOrdenService {
     private String bearerToken;
 
 
-    public AnalizarOrdenService(OrdenRepository ordenRepository, OrdenMapper ordenMapper, RestTemplate restTemplate, DataVerificationService dataVerificationService, CompraVentaService compraVentaService, ReporteOperacionesService reporteOperacionesService) {
+    public AnalizarOrdenService(OrdenRepository ordenRepository, DataVerificationService dataVerificationService, CompraVentaService compraVentaService, ReporteOperacionesService reporteOperacionesService, LoggerService loggerService, ProgramarOperacionService programarOperacionService) {
         this.ordenRepository = ordenRepository;
-        this.ordenMapper = ordenMapper;
-        this.restTemplate = restTemplate;
         this.dataVerificationService = dataVerificationService;
         this.compraVentaService = compraVentaService;
         this.reporteOperacionesService = reporteOperacionesService;
+        this.loggerService = loggerService;
+        this.programarOperacionService = programarOperacionService;
     }
 
 
-    public void analizarOrdenes() {
+    public boolean analizarOrdenes(Mono<List<Orden>> operacionesPendientesMono) {
 
         List<Orden> operacionesPendientes = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         ObjectNode wrapperJson = objectMapper.createObjectNode();
 
         List<ObjectNode> listaUpdated= new ArrayList<>();
-        Mono<List<Orden>> operacionesPendientesMono = ordenRepository.findAll().collectList();
+//        Mono<List<Orden>> operacionesPendientesMono = ordenRepository.findAll().collectList();
 
         operacionesPendientesMono.subscribe(
             list -> {
@@ -83,7 +83,7 @@ public class AnalizarOrdenService {
             Boolean accion = dataVerificationService.checkAccion(orden.getAccionId());
             Boolean cliente = dataVerificationService.checkCliente(orden.getCliente());
 //            int time = java.time.LocalDateTime.now().getHour();
-            int time = 12;
+            int time = 12;  //  Cambiar en final
             int cantidad = orden.getCantidad();
             String modo = orden.getModo();
             String operacion = orden.getOperacion();
@@ -114,8 +114,9 @@ public class AnalizarOrdenService {
             }else {
                 log.debug("Es legal ------------>  Hora: " + time + " Accion: " + accion + " Cliente: " + cliente + " Modo: " + modo);
                 operacionExitosa.add(orden);
-
                 if(modo.equals("AHORA")){
+                    listaUpdated.add(existingJson);
+                    wrapperJson.putArray("ordenes").addAll(listaUpdated);
                     if(operacion.equals("COMPRA")){
                         log.debug("Compra exitosa! --------> " + compraVentaService.comprarAccion(orden));
                         existingJson.put("operacionExitosa", true);
@@ -125,13 +126,11 @@ public class AnalizarOrdenService {
                         existingJson.put("operacionExitosa", true);
                         existingJson.put("operacionObservaciones", "Venta exitosa!");
                     }
+                }else {
+                    programarOperacionService.programarOperacion(orden);
                 }
 
             }
-
-            listaUpdated.add(existingJson);
-
-            wrapperJson.putArray("ordenes").addAll(listaUpdated);
 
             System.out.println("Operacion -----------> " + operacionesPendientes.get(i));
             System.out.println("ExistingJson -----------> " + existingJson);
@@ -141,10 +140,11 @@ public class AnalizarOrdenService {
 
 
             log.info("Orden procesada ------------> " + operacionesPendientes.get(i));
+            loggerService.logOrdenProcesada(operacionesPendientes.get(i));
 
         }
-        reporteOperacionesService.reportarOperacion(wrapperJson); // Cambiar para que mande lista de objetos
+
+        reporteOperacionesService.reportarOperacion(wrapperJson);
+        return true;
     }
-
-
 }

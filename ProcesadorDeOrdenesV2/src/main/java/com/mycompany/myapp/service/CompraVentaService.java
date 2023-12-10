@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 public class CompraVentaService {
 
 
-    public Boolean comprarAccion(Orden orden) {
+    public boolean comprarAccion(Orden orden) {
         System.out.println("-------> Compra Exitosa! <-------");
-        return Boolean.TRUE;
+        return true;
     }
 
-    public Boolean venderAccion(Orden orden) {
+    public boolean venderAccion(Orden orden) {
         System.out.println("-------> Venta Exitosa! <-------");
-        return Boolean.TRUE;
+        return true;
     }
 
 }
