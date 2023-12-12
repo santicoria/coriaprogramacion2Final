@@ -27,7 +27,7 @@ public class DataVerificationService {
 
 
 
-    public Boolean checkCliente(int clienteId) {
+    public Boolean checkCliente(int clienteId, String externalServiceUrl, String bearerToken) {
 
         String externalEndpointClientes = "/api/clientes/";
 
@@ -51,7 +51,7 @@ public class DataVerificationService {
 
     }
 
-    public Boolean checkAccion(int accionId) {
+    public Boolean checkAccion(int accionId, String externalServiceUrl, String bearerToken) {
 
         String externalEndpointAcciones = "/api/accions/";
 

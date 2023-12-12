@@ -1,9 +1,5 @@
 package com.mycompany.myapp.web.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.repository.OrdenRepository;
 import com.mycompany.myapp.service.AnalizarOrdenService;
 import com.mycompany.myapp.service.GetOrdenesFromCatedraService;
@@ -16,14 +12,11 @@ import java.util.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.result.method.annotation.AbstractNamedValueArgumentResolver;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,6 +29,13 @@ import tech.jhipster.web.util.reactive.ResponseUtil;
 @RestController
 @RequestMapping("/api")
 public class OrdenResource {
+
+    @Value("${external.service.url}")
+    private String externalServiceUrl;
+
+    @Value("${externalBearer.token}")
+    private String bearerToken;
+
 
     private final AnalizarOrdenService analizarOrdenService;
 
@@ -235,7 +235,7 @@ public class OrdenResource {
     public  Mono<Void> getOrdenesCatedra() {
         log.debug("Request para recuperar las ordenes de la catedra");
 
-        return getOrdenesFromCatedraService.getOrdenesCatedra();
+        return getOrdenesFromCatedraService.getOrdenesCatedra(externalServiceUrl, bearerToken);
 
     }
 

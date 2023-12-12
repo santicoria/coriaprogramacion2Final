@@ -93,7 +93,8 @@ public class ProgramarOperacionService {
             existingJson.put("operacionObservaciones", "Venta exitosa!");
         }
 
-        reporteOperacionesService.reportarOperacion(wrapperJson);
+        reporteOperacionesService.reportarOperacionACatedra(wrapperJson);
+        reporteOperacionesService.reportarOperacionInterno(wrapperJson).subscribe();
 
     }
 

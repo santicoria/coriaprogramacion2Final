@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mycompany.myapp.domain.Orden;
 import com.mycompany.myapp.repository.OrdenRepository;
-import com.mycompany.myapp.service.mapper.OrdenMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -19,6 +17,8 @@ import java.util.List;
 
 @Service
 public class AnalizarOrdenService {
+
+    private final CleanerService cleanerService;
 
     private final ProgramarOperacionService programarOperacionService;
 
@@ -45,7 +45,8 @@ public class AnalizarOrdenService {
     private String bearerToken;
 
 
-    public AnalizarOrdenService(OrdenRepository ordenRepository, DataVerificationService dataVerificationService, CompraVentaService compraVentaService, ReporteOperacionesService reporteOperacionesService, LoggerService loggerService, ProgramarOperacionService programarOperacionService) {
+    public AnalizarOrdenService(CleanerService cleanerService, OrdenRepository ordenRepository, DataVerificationService dataVerificationService, CompraVentaService compraVentaService, ReporteOperacionesService reporteOperacionesService, LoggerService loggerService, ProgramarOperacionService programarOperacionService) {
+        this.cleanerService = cleanerService;
         this.ordenRepository = ordenRepository;
         this.dataVerificationService = dataVerificationService;
         this.compraVentaService = compraVentaService;
@@ -57,6 +58,7 @@ public class AnalizarOrdenService {
 
     public boolean analizarOrdenes(Mono<List<Orden>> operacionesPendientesMono) {
 
+        List<Long> idList= new ArrayList<Long>();
         List<Orden> operacionesPendientes = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         ObjectNode wrapperJson = objectMapper.createObjectNode();
@@ -80,8 +82,10 @@ public class AnalizarOrdenService {
 
             Orden orden = operacionesPendientes.get(i);
 
-            Boolean accion = dataVerificationService.checkAccion(orden.getAccionId());
-            Boolean cliente = dataVerificationService.checkCliente(orden.getCliente());
+            idList.add(orden.getId());
+
+            Boolean accion = dataVerificationService.checkAccion(orden.getAccionId(), externalServiceUrl, bearerToken);
+            Boolean cliente = dataVerificationService.checkCliente(orden.getCliente(), externalServiceUrl, bearerToken);
 //            int time = java.time.LocalDateTime.now().getHour();
             int time = 12;  //  Cambiar en final
             int cantidad = orden.getCantidad();
@@ -92,21 +96,29 @@ public class AnalizarOrdenService {
 
 
             if(time<9 || time>18){
+                listaUpdated.add(existingJson);
+                wrapperJson.putArray("ordenes").addAll(listaUpdated);
                 log.debug("La orden fue procesada fuera del horario permitido.");
                 operacionFallida.add(operacionesPendientes.get(i));
                 existingJson.put("operacionExitosa", false);
                 existingJson.put("operacionObservaciones", "La orden fue procesada fuera del horario permitido.");
             } else if (!accion) {
+                listaUpdated.add(existingJson);
+                wrapperJson.putArray("ordenes").addAll(listaUpdated);
                 log.debug("La accion no esta disponible.");
                 operacionFallida.add(operacionesPendientes.get(i));
                 existingJson.put("operacionExitosa", false);
                 existingJson.put("operacionObservaciones", "La accion no esta disponible.");
             } else if (!cliente) {
+                listaUpdated.add(existingJson);
+                wrapperJson.putArray("ordenes").addAll(listaUpdated);
                 log.debug("El cliente no esta disponible.");
                 operacionFallida.add(operacionesPendientes.get(i));
                 existingJson.put("operacionExitosa", false);
                 existingJson.put("operacionObservaciones", "El cliente no esta disponible.");
             } else if (cantidad<=0) {
+                listaUpdated.add(existingJson);
+                wrapperJson.putArray("ordenes").addAll(listaUpdated);
                 log.debug("La cantidad necesaria para operar debe ser mayor a 0.");
                 operacionFallida.add(operacionesPendientes.get(i));
                 existingJson.put("operacionExitosa", false);
@@ -144,7 +156,10 @@ public class AnalizarOrdenService {
 
         }
 
-        reporteOperacionesService.reportarOperacion(wrapperJson);
+//        reporteOperacionesService.reportarOperacionACatedra(wrapperJson)
+        reporteOperacionesService.reportarOperacionInterno(wrapperJson).subscribe();
+        cleanerService.cleanDb(idList);
+
         return true;
     }
 }

@@ -18,12 +18,6 @@ public class GetOrdenesFromCatedraService {
 
     private final LoggerService loggerService;
 
-    @Value("${external.service.url}")
-    private String externalServiceUrl;
-
-    @Value("${externalBearer.token}")
-    private String bearerToken;
-
     private final RestTemplate restTemplate;
 
     private final OrdenService ordenService;
@@ -34,7 +28,7 @@ public class GetOrdenesFromCatedraService {
         this.loggerService = loggerService;
     }
 
-    public Mono<Void> getOrdenesCatedra() {
+    public Mono<Void> getOrdenesCatedra(String externalServiceUrl, String bearerToken) {
         String externalEndpoint = "/api/ordenes/ordenes";
 
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
