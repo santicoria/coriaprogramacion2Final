@@ -2,6 +2,7 @@ package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Orden;
 import com.mycompany.myapp.domain.Reporte;
+import io.r2dbc.spi.Parameter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.relational.core.query.Criteria;
@@ -10,6 +11,8 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
 
 /**
  * Spring Data R2DBC repository for the Reporte entity.
@@ -25,6 +28,13 @@ public interface ReporteRepository extends ReactiveCrudRepository<Reporte, Long>
 
     @Override
     Flux<Reporte> findAll();
+
+    @Query("SELECT * FROM reporte  WHERE (:cliente IS NULL OR cliente=:cliente) AND (:accion IS NULL OR accion_Id=:accion) AND (:fechaInicio IS NULL OR fecha_operacion BETWEEN :fechaInicio AND :fechaFinal)")
+    Flux<Reporte> findAllQuery(@Param("cliente") Integer cliente, @Param("accion") Integer accion, @Param("fechaInicio")LocalDateTime fechaInicio, @Param("fechaFinal")LocalDateTime fechaFinal);
+
+    @Query("SELECT * FROM reporte WHERE operacion_exitosa=false")
+    Flux<Reporte> findAllQueryNoProc();
+
 
     @Override
     Mono<Reporte> findById(Long id);

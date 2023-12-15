@@ -4,6 +4,8 @@ import com.mycompany.myapp.domain.Reporte;
 import com.mycompany.myapp.repository.ReporteRepository;
 import com.mycompany.myapp.service.dto.ReporteDTO;
 import com.mycompany.myapp.service.mapper.ReporteMapper;
+
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,6 +90,20 @@ public class ReporteService {
     public Flux<ReporteDTO> findAll() {
         log.debug("Request to get all Reportes");
         return reporteRepository.findAll().map(reporteMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<ReporteDTO> findAllQuery(Integer cliente, Integer accion, LocalDateTime fechaInicio, LocalDateTime fechaFinal) {
+        log.debug("Request to get all Reportes Query");
+        if(fechaFinal == null){
+            fechaFinal = LocalDateTime.now();
+        }
+        return reporteRepository.findAllQuery(cliente, accion, fechaInicio, fechaFinal).map(reporteMapper::toDto);
+    }
+    @Transactional(readOnly = true)
+    public Flux<ReporteDTO> findAllQueryNoProc() {
+        log.debug("Request to get all Reportes No procesados");
+        return reporteRepository.findAllQueryNoProc().map(reporteMapper::toDto);
     }
 
     /**

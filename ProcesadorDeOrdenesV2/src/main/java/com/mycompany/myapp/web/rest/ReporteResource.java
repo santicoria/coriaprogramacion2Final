@@ -7,14 +7,16 @@ import com.mycompany.myapp.service.dto.ReporteDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import io.r2dbc.spi.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -221,21 +223,24 @@ public class ReporteResource {
 
 //    ------------------------------------------------------------------------------------------------------
 
-//    @GetMapping("/reportes/buscar-procesadas")
-//    public Flux<ReporteDTO> getClienteQuery(
-//        @RequestParam(required = false) final String cliente
-////        @RequestParam(required = false) final int accion,
-////        @RequestParam(required = false) final LocalDateTime fechaInicio,
-////        @RequestParam(required = false) final LocalDateTime fechaFin
-//    ) {
-//
-//
-//
-//        System.out.println("-----------------> Query result: " + reporteService.findAllQuery(cliente).subscribe());
-//
-//        return reporteService.findAllQuery(cliente);
-//    }
+    @GetMapping("/reportes/buscar-procesadas")
+    public Mono<List<ReporteDTO>> getClienteQuery(
+        @RequestParam(required = false) final Integer cliente,
+        @RequestParam(required = false) final Integer accion,
+        @RequestParam(required = false) final LocalDateTime fechaInicio,
+        @RequestParam(required = false) final LocalDateTime fechaFin
+    ) {
 
+        return reporteService.findAllQuery(cliente, accion, fechaInicio, fechaFin).collectList();
+
+    }
+
+    @GetMapping("/reportes/buscar-noprocesadas")
+    public Mono<List<ReporteDTO>> getClienteQuery() {
+
+        return reporteService.findAllQueryNoProc().collectList();
+
+    }
 
 }
 

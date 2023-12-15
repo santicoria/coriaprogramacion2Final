@@ -32,15 +32,18 @@ public class ProgramarOperacionService {
         this.compraVentaService = compraVentaService;
     }
 
-    public void programarOperacion(Orden orden) {
+    public String programarOperacion(Orden orden) {
         if(orden.getModo().equals("PRINCIPIODIA")){
             programPrincipioDia(orden);
+            return "PRINCIPIODIA";
         } else if (orden.getModo().equals("FINDIA")) {
             programFinDia(orden);
+            return "FINDIA";
         }
+        return "ERROR";
     }
 
-    private void programFinDia(Orden orden){
+    public void programFinDia(Orden orden){
 
         System.out.println("----------> Orden programada para Fin del Dia <----------");
         loggerService.logOrdenProgramada(orden);
@@ -56,7 +59,7 @@ public class ProgramarOperacionService {
 
     }
 
-    private void programPrincipioDia(Orden orden){
+    public void programPrincipioDia(Orden orden){
 
         System.out.println("----------> Orden programada para Principio del Dia <----------");
         loggerService.logOrdenProgramada(orden);
@@ -72,7 +75,7 @@ public class ProgramarOperacionService {
 
     }
 
-    private void ejecutarOperacion(Orden orden){
+    public void ejecutarOperacion(Orden orden){
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         ObjectNode existingJson = objectMapper.convertValue(orden, ObjectNode.class);
         ObjectNode wrapperJson = objectMapper.createObjectNode();
@@ -98,7 +101,7 @@ public class ProgramarOperacionService {
 
     }
 
-    private static long calculateDelayToNextExecution(long time) {
+    public long calculateDelayToNextExecution(long time) {
         long now = System.currentTimeMillis();
         long desiredTime = time;
 //        long delay = desiredTime - now;
