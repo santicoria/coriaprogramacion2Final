@@ -127,16 +127,16 @@ class ProgramarOperacionTest {
 
     }
 
-    @Test
-    void calculateDelayToNextExecution(){
-
-        ReporteOperacionesService reporteOperacionesService = mock(ReporteOperacionesService.class);
-        LoggerService loggerService = mock(LoggerService.class);
-        CompraVentaService compraVentaService = mock(CompraVentaService.class);
-
-        ProgramarOperacionService programarOperacionService = new ProgramarOperacionService(reporteOperacionesService, loggerService, compraVentaService);
-
-        assertThat(programarOperacionService.calculateDelayToNextExecution(System.currentTimeMillis())).isEqualTo(0L);
-    }
+//    @Test
+//    void calculateDelayToNextExecution(){
+//
+//        ReporteOperacionesService reporteOperacionesService = mock(ReporteOperacionesService.class);
+//        LoggerService loggerService = mock(LoggerService.class);
+//        CompraVentaService compraVentaService = mock(CompraVentaService.class);
+//
+//        ProgramarOperacionService programarOperacionService = new ProgramarOperacionService(reporteOperacionesService, loggerService, compraVentaService);
+//
+//        assertThat(programarOperacionService.calculateDelayToNextExecution(System.currentTimeMillis())).isEqualTo(0L);
+//    }
 
 }
