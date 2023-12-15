@@ -81,62 +81,6 @@ class ProgramarOperacionTest {
         assertThat(programarOperacionService.programarOperacion(ordenAhora)).isEqualTo("ERROR");
     }
 
-//    @Test
-//    void programFinDia() {
-//
-//        ReporteOperacionesService reporteOperacionesService = mock(ReporteOperacionesService.class);
-//        LoggerService loggerService = mock(LoggerService.class);
-//        CompraVentaService compraVentaService = mock(CompraVentaService.class);
-//
-//        ProgramarOperacionService programarOperacionService = new ProgramarOperacionService(reporteOperacionesService, loggerService, compraVentaService);
-//
-//        ScheduledExecutorService execute = mock(ScheduledExecutorService.class);
-//        ProgramarOperacionService mockedProgramarOperacionService = mock(ProgramarOperacionService.class);
-//
-//        Orden ordenFin = new Orden()
-//            .cliente(12313)
-//            .accionId(1)
-//            .accion("AAPL")
-//            .operacion("COMPRA")
-//            .precio(12F)
-//            .cantidad(5)
-//            .fechaOperacion(LocalDateTime.now())
-//            .modo("FINDIA");
-//
-//        programarOperacionService.programFinDia(ordenFin);
-//
-//        Runnable task = () -> {
-//            System.out.println("AAAAAAAA");
-////            mockedProgramarOperacionService.ejecutarOperacion(ordenFin);
-//        };
-//
-//        long delay = 10000;
-//
-//        Mockito.verify(execute, Mockito.times(1)).schedule(task, delay, TimeUnit.MILLISECONDS);
-//
-//    }
 
-
-    @Test
-    void programPrincipioDia(){
-
-    }
-
-    @Test
-    void ejecutarOperacion(){
-
-    }
-
-//    @Test
-//    void calculateDelayToNextExecution(){
-//
-//        ReporteOperacionesService reporteOperacionesService = mock(ReporteOperacionesService.class);
-//        LoggerService loggerService = mock(LoggerService.class);
-//        CompraVentaService compraVentaService = mock(CompraVentaService.class);
-//
-//        ProgramarOperacionService programarOperacionService = new ProgramarOperacionService(reporteOperacionesService, loggerService, compraVentaService);
-//
-//        assertThat(programarOperacionService.calculateDelayToNextExecution(System.currentTimeMillis())).isEqualTo(0L);
-//    }
 
 }

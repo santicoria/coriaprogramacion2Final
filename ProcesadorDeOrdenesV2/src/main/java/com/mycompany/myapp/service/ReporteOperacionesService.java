@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,19 +34,17 @@ public class ReporteOperacionesService {
         this.reporteService = reporteService;
     }
 
-    public void reportarOperacionACatedra(Object operacion){
+    public ResponseEntity<String> reportarOperacionACatedra(Object operacion){
 
         String externalEndpoint = "/api/reporte-operaciones/reportar";
 
-        System.out.println("Paquete actualizado -----------> " + operacion);
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + bearerToken);
+        headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW50aWFnb2NvcmlhIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTczMjYzMTcwM30.F1kI20s9p1kv8l2LhJcEcL-66_9X44zIybZw1piDV_ze2FiU3C7Th6iD6FRT7RFwuE9lWw1BCCJYr9hQYk8rEg");
 
         HttpEntity<Object> requestPostEntity = new HttpEntity<>(operacion, headers);
         ResponseEntity<String> response = restTemplate.exchange(
-            externalServiceUrl + externalEndpoint,
+            "http://192.168.194.254:8000" + externalEndpoint,
             HttpMethod.POST,
             requestPostEntity,
             String.class
@@ -58,6 +55,8 @@ public class ReporteOperacionesService {
         }else {
             log.debug("Error al reportar.");
         }
+
+        return response;
 
     }
 

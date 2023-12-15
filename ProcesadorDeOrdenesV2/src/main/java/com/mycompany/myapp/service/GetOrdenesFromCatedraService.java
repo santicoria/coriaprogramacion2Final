@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mycompany.myapp.service.dto.OrdenDTO;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -28,7 +27,16 @@ public class GetOrdenesFromCatedraService {
         this.loggerService = loggerService;
     }
 
-    public Mono<Void> getOrdenesCatedra(String externalServiceUrl, String bearerToken) {
+
+    public Mono<Void> getOrdenesCatedra(String externalServiceUrl, String bearerToken){
+
+        List<OrdenDTO> ordenes = getOrdenes(externalServiceUrl, bearerToken);
+
+        return saveOrdenes(ordenes);
+
+    }
+
+    public List<OrdenDTO> getOrdenes(String externalServiceUrl, String bearerToken){
         String externalEndpoint = "/api/ordenes/ordenes";
 
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -46,22 +54,23 @@ public class GetOrdenesFromCatedraService {
             String.class
         );
 
-        //  Si se obtiene la lista, almacenarla en la DB del servicio
-        if (jsonData.getStatusCode() == HttpStatus.OK) {
-
-            //  Transformar el JSON del Request a una lista de OrdenDTO
+//          Transformar el JSON del Request a una lista de OrdenDTO
             try {
                 ordenDTOList = mapper.readValue(jsonData.getBody().substring(11, jsonData.getBody().length() - 1), new TypeReference<List<OrdenDTO>>() {});
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
 
-            loggerService.logOrdenRecuperada(ordenDTOList);
-            return  ordenService.saveAll(ordenDTOList);
+        return ordenDTOList;
 
-        } else {
-            return null;
-        }
+    }
+
+    public Mono<Void> saveOrdenes(List<OrdenDTO> ordenes){
+
+        loggerService.logOrdenRecuperada(ordenes);
+
+        return  ordenService.saveAll(ordenes);
+
     }
 
 

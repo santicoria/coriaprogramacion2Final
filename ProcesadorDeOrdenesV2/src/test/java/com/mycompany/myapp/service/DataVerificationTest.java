@@ -11,6 +11,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class DataVerificationTest {
+
+    String url = "http://192.168.194.254:8000";
+    String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW50aWFnb2NvcmlhIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTczMjYzMTcwM30.F1kI20s9p1kv8l2LhJcEcL-66_9X44zIybZw1piDV_ze2FiU3C7Th6iD6FRT7RFwuE9lWw1BCCJYr9hQYk8rEg";
     @Test
     void checkCliente() throws Exception{
 
@@ -18,7 +21,7 @@ public class DataVerificationTest {
 
         DataVerificationService dataVerificationService = new DataVerificationService(restTemplate);
 
-        assertTrue(dataVerificationService.checkCliente(201225, "http://192.168.194.254:8000", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW50aWFnb2NvcmlhIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTczMjYzMTcwM30.F1kI20s9p1kv8l2LhJcEcL-66_9X44zIybZw1piDV_ze2FiU3C7Th6iD6FRT7RFwuE9lWw1BCCJYr9hQYk8rEg"));
+        assertTrue(dataVerificationService.checkCliente(201225, url, token));
 
     }
 
@@ -29,7 +32,7 @@ public class DataVerificationTest {
 
         DataVerificationService dataVerificationService = new DataVerificationService(restTemplate);
 
-        assertTrue(dataVerificationService.checkAccion(1, "http://192.168.194.254:8000", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW50aWFnb2NvcmlhIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTczMjYzMTcwM30.F1kI20s9p1kv8l2LhJcEcL-66_9X44zIybZw1piDV_ze2FiU3C7Th6iD6FRT7RFwuE9lWw1BCCJYr9hQYk8rEg"));
+        assertTrue(dataVerificationService.checkAccion(1, url, token));
 
     }
 
@@ -40,7 +43,7 @@ public class DataVerificationTest {
 
         DataVerificationService dataVerificationService = new DataVerificationService(restTemplate);
 
-        assertFalse(dataVerificationService.checkCliente(201131225, "http://192.168.194.254:8000", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW50aWFnb2NvcmlhIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTczMjYzMTcwM30.F1kI20s9p1kv8l2LhJcEcL-66_9X44zIybZw1piDV_ze2FiU3C7Th6iD6FRT7RFwuE9lWw1BCCJYr9hQYk8rEg"));
+        assertFalse(dataVerificationService.checkCliente(201131225, url, token));
 
     }
 
@@ -51,7 +54,7 @@ public class DataVerificationTest {
 
         DataVerificationService dataVerificationService = new DataVerificationService(restTemplate);
 
-        assertFalse(dataVerificationService.checkAccion(113131231, "http://192.168.194.254:8000", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW50aWFnb2NvcmlhIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTczMjYzMTcwM30.F1kI20s9p1kv8l2LhJcEcL-66_9X44zIybZw1piDV_ze2FiU3C7Th6iD6FRT7RFwuE9lWw1BCCJYr9hQYk8rEg"));
+        assertFalse(dataVerificationService.checkAccion(113131231, url, token));
 
     }
 

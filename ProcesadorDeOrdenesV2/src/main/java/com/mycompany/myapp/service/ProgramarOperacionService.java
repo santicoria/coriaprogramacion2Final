@@ -45,7 +45,6 @@ public class ProgramarOperacionService {
 
     public void programFinDia(Orden orden){
 
-        System.out.println("----------> Orden programada para Fin del Dia <----------");
         loggerService.logOrdenProgramada(orden);
 
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -56,12 +55,10 @@ public class ProgramarOperacionService {
 
         long delay = calculateDelayToNextExecution(18);
         executor.schedule(task, delay, TimeUnit.MILLISECONDS);
-
     }
 
     public void programPrincipioDia(Orden orden){
 
-        System.out.println("----------> Orden programada para Principio del Dia <----------");
         loggerService.logOrdenProgramada(orden);
 
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -104,9 +101,12 @@ public class ProgramarOperacionService {
     public long calculateDelayToNextExecution(long time) {
         long now = System.currentTimeMillis();
         long desiredTime = time;
-//        long delay = desiredTime - now;
-        long delay = 10000;
+        long delay = desiredTime - now;
+        // La linea de abajo hace que las ordenes procesadas se ejecuten 10 segundos luego de procesada la orden. Comentar la linea de arriba para usarla.
+//        long delay = 10000;
         return delay;
     }
+
+
 
 }

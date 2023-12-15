@@ -201,4 +201,48 @@ class AnalizarOrdenTest {
         assertThat(result.toString()).isEqualTo(expectedResult);
     }
 
+    @Test
+    void ejecutarCompraTest() {
+        String time = LocalDateTime.now().format(dTF);
+
+        Orden ordenCompra = new Orden()
+            .cliente(201225)
+            .accionId(1)
+            .accion("AAPL")
+            .operacion("COMPRA")
+            .precio(12F)
+            .cantidad(5)
+            .fechaOperacion(LocalDateTime.now())
+            .modo("AHORA");
+
+        ObjectNode result = analizarOrdenService.ejecutarOperacion(5, ordenCompra);
+
+        String expectedResult = "{\"id\":null,\"cliente\":201225,\"accionId\":1,\"accion\":\"AAPL\",\"operacion\":\"COMPRA\",\"precio\":12.0,\"cantidad\":5,\"fechaOperacion\":\"" + time + "\",\"modo\":\"AHORA\",\"operacionExitosa\":true,\"operacionObservaciones\":\"Compra exitosa!\"}";
+
+        assertThat(result.toString()).isEqualTo(expectedResult);
+
+    }
+
+    @Test
+    void ejecutarVentaTest() {
+        String time = LocalDateTime.now().format(dTF);
+
+        Orden ordenVenta = new Orden()
+            .cliente(201225)
+            .accionId(1)
+            .accion("AAPL")
+            .operacion("VENTA")
+            .precio(12F)
+            .cantidad(5)
+            .fechaOperacion(LocalDateTime.now())
+            .modo("AHORA");
+
+        ObjectNode result = analizarOrdenService.ejecutarOperacion(6, ordenVenta);
+
+        String expectedResult = "{\"id\":null,\"cliente\":201225,\"accionId\":1,\"accion\":\"AAPL\",\"operacion\":\"VENTA\",\"precio\":12.0,\"cantidad\":5,\"fechaOperacion\":\"" + time + "\",\"modo\":\"AHORA\",\"operacionExitosa\":true,\"operacionObservaciones\":\"Venta exitosa!\"}";
+
+        assertThat(result.toString()).isEqualTo(expectedResult);
+
+    }
+
 }

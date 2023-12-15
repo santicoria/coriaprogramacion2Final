@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 
-public class CompraVentaUnitTest {
+public class CompraVentaTest {
 
     @Test
     void comprarAccion(){

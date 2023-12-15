@@ -24,8 +24,6 @@ public class AnalizarOrdenService {
 
     private final LoggerService loggerService;
 
-    private final Logger log = LoggerFactory.getLogger(AnalizarOrdenService.class);
-
     private ReporteOperacionesService reporteOperacionesService;
 
     private List<ObjectNode> listaUpdated= new ArrayList<>();
@@ -70,10 +68,15 @@ public class AnalizarOrdenService {
             idList.add(orden.getId());
             int code = analyzer(operacionesPendientes.get(i));
             codeHandler(code, operacionesPendientes.get(i));
-        }
-        wrapperJson.putArray("ordenes").addAll(listaUpdated);
+            if(code<7){
+                wrapperJson.putArray("ordenes").addAll(listaUpdated);
 
-        reporteOperacionesService.reportarOperacionInterno(wrapperJson).subscribe();
+                //        reporteOperacionesService.reportarOperacionACatedra(wrapperJson);
+                reporteOperacionesService.reportarOperacionInterno(wrapperJson).subscribe();
+            }
+            loggerService.logOrdenProcesada(orden);
+        }
+
         cleanerService.cleanDb(idList);
 
         return true;
@@ -84,8 +87,8 @@ public class AnalizarOrdenService {
 
         Boolean accion = dataVerificationService.checkAccion(orden.getAccionId(), externalServiceUrl, bearerToken);
         Boolean cliente = dataVerificationService.checkCliente(orden.getCliente(), externalServiceUrl, bearerToken);
-        //            int time = java.time.LocalDateTime.now().getHour();
-        int time = 12;  //  Cambiar en final
+//        int time = java.time.LocalDateTime.now().getHour();
+        int time = 12; //   En produccion esta linea no deberia ir, sino la de arriba
         int cantidad = orden.getCantidad();
         String modo = orden.getModo();
         String operacion = orden.getOperacion();
