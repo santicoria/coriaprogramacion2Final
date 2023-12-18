@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +31,10 @@ class GetOrdenesFromCatedraTest {
 
     @Test
     void getOrdenesCatedraTest(){
+        LocalDateTime localDateTime = LocalDateTime.now();
 
         //  Cambiar segun el resultado esperado
-        String expectedResult = "[OrdenDTO{id=null, cliente=201225, accionId=13, accion='PAM', operacion='COMPRA', precio=127.78, cantidad=20, fechaOperacion='2023-12-15T04:00', modo='PRINCIPIODIA'}, OrdenDTO{id=null, cliente=201225, accionId=13, accion='PAM', operacion='COMPRA', precio=119.17, cantidad=32, fechaOperacion='2023-12-15T12:00', modo='AHORA'}, OrdenDTO{id=null, cliente=201225, accionId=13, accion='PAM', operacion='VENTA', precio=122.96, cantidad=12, fechaOperacion='2023-12-15T14:20', modo='AHORA'}, OrdenDTO{id=null, cliente=201225, accionId=13, accion='PAM', operacion='VENTA', precio=118.23, cantidad=10, fechaOperacion='2023-12-15T18:00', modo='FINDIA'}]";
+        String expectedResult = "[OrdenDTO{id=null, cliente=201225, accionId=13, accion='PAM', operacion='COMPRA', precio=127.78, cantidad=20, fechaOperacion='2023-12-18T04:00', modo='PRINCIPIODIA'}, OrdenDTO{id=null, cliente=201225, accionId=13, accion='PAM', operacion='COMPRA', precio=119.17, cantidad=32, fechaOperacion='2023-12-18T12:00', modo='AHORA'}, OrdenDTO{id=null, cliente=201225, accionId=13, accion='PAM', operacion='VENTA', precio=122.96, cantidad=12, fechaOperacion='2023-12-18T14:20', modo='AHORA'}, OrdenDTO{id=null, cliente=201225, accionId=13, accion='PAM', operacion='VENTA', precio=118.23, cantidad=10, fechaOperacion='2023-12-18T18:00', modo='FINDIA'}]";
 
         List<OrdenDTO> getResult = getOrdenesFromCatedraService.getOrdenes(url, token);
 

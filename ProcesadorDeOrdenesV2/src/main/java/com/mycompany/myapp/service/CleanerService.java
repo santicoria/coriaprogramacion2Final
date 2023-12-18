@@ -19,4 +19,5 @@ public class CleanerService {
             ordenService.delete(idList.get(i)).subscribe();
         }
     }
+
 }
